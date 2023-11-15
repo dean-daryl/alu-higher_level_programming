@@ -1,4 +1,4 @@
-i#!/usr/bin/python3
+#!/usr/bin/python3
 
 '''module: 5-rectangle
 this module contains the class Rectangle ...
@@ -99,8 +99,9 @@ class Rectangle:
         ret_str = "Rectangle(" + str(self.__width) + ","
         ret_str += str(self.__height) + ")"
         return ret_str
+
     def __del__(self):
-        """method:__del__
-        deletes instance of Rectangle class, and prints "bye" message
-        """
+        '''method: __del__
+           deletes instance of Rectangle class, and prints "bye" message
+        '''
         print("Bye rectangle...")
