@@ -1,7 +1,10 @@
 #!/usr/bin/python3
-''' initialize empty class '''
+"""
+This is an empty BaseGeometry class.
+"""
 
 
-class Base:
-    ''' empty class '''
+class BaseGeometry:
+    ''' Class: BaseGeometry
+    '''
     pass
