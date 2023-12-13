@@ -1,136 +1,96 @@
 #!/usr/bin/python3
-""" Module that contains class Base """
-import json
-import csv
-import os.path
+""" Module for test Base class """
+import unittest
+from models.base import Base
+from models.square import Square
+from models.rectangle import Rectangle
+from io import StringIO
+from unittest import TestCase
+from unittest.mock import patch
 
 
-class Base:
-    """ Class Base """
-    __nb_objects = 0
+class TestBaseMethods(unittest.TestCase):
+    """ Suite to test Base class """
 
-    def __init__(self, id=None):
-        """ Initializes instances """
-        if id is not None:
-            self.id = id
-        else:
-            Base.__nb_objects += 1
-            self.id = Base.__nb_objects
+    def setUp(self):
+        """ Method invoked for each test """
+        Base._Base__nb_objects = 0
 
-    @staticmethod
-    def to_json_string(list_dictionaries):
-        """ List to JSON string """
-        if list_dictionaries is None or list_dictionaries == "[]":
-            return "[]"
-        return json.dumps(list_dictionaries)
+    def test_id(self):
+        """ Test assigned id """
+        new = Base(1)
+        self.assertEqual(new.id, 1)
 
-    @classmethod
-    def save_to_file(cls, list_objs):
-        """ Save object in a file """
-        filename = "{}.json".format(cls.__name__)
-        list_dic = []
+    def test_id_default(self):
+        """ Test default id """
+        new = Base()
+        self.assertEqual(new.id, 1)
 
-        if not list_objs:
+    def test_id_nb_objects(self):
+        """ Test nb object attribute """
+        new = Base()
+        new2 = Base()
+        new3 = Base()
+        self.assertEqual(new.id, 1)
+        self.assertEqual(new2.id, 2)
+        self.assertEqual(new3.id, 3)
+
+    def test_id_mix(self):
+        """ Test nb object attributes and assigned id """
+        new = Base()
+        new2 = Base(1024)
+        new3 = Base()
+        self.assertEqual(new.id, 1)
+        self.assertEqual(new2.id, 1024)
+        self.assertEqual(new3.id, 2)
+
+    def test_string_id(self):
+        """ Test string id """
+        new = Base('1')
+        self.assertEqual(new.id, '1')
+
+    def test_more_args_id(self):
+        """ Test passing more args to init method """
+        with self.assertRaises(TypeError):
+            new = Base(1, 1)
+
+    def test_access_private_attrs(self):
+        """ Test accessing to private attributes """
+        new = Base()
+        with self.assertRaises(AttributeError):
+            new.__nb_objects
+
+    def test_save_to_file_1(self):
+        """ Test JSON file """
+        Square.save_to_file(None)
+        res = "[]\n"
+        with open("Square.json", "r") as file:
+            with patch('sys.stdout', new=StringIO()) as str_out:
+                print(file.read())
+                self.assertEqual(str_out.getvalue(), res)
+
+        try:
+            os.remove("Square.json")
+        except:
             pass
-        else:
-            for i in range(len(list_objs)):
-                list_dic.append(list_objs[i].to_dictionary())
 
-        lists = cls.to_json_string(list_dic)
+        Square.save_to_file([])
+        with open("Square.json", "r") as file:
+            self.assertEqual(file.read(), "[]")
 
-        with open(filename, 'w') as f:
-            f.write(lists)
-
-    @staticmethod
-    def from_json_string(json_string):
-        """ JSON string to dictionary """
-        if not json_string:
-            return []
-        return json.loads(json_string)
-
-    @classmethod
-    def create(cls, **dictionary):
-        """ Create an instance """
-        if cls.__name__ == "Rectangle":
-            new = cls(10, 10)
-        else:
-            new = cls(10)
-        new.update(**dictionary)
-        return new
-
-    @classmethod
-    def load_from_file(cls):
-        """ Returns a list of instances """
-        filename = "{}.json".format(cls.__name__)
-
-        if os.path.exists(filename) is False:
-            return []
-
-        with open(filename, 'r') as f:
-            list_str = f.read()
-
-        list_cls = cls.from_json_string(list_str)
-        list_ins = []
-
-        for index in range(len(list_cls)):
-            list_ins.append(cls.create(**list_cls[index]))
-
-        return list_ins
-
-    @classmethod
-    def save_to_file_csv(cls, list_objs):
-        """ Method that saves a CSV file """
-        filename = "{}.csv".format(cls.__name__)
-
-        if cls.__name__ == "Rectangle":
-            list_dic = [0, 0, 0, 0, 0]
-            list_keys = ['id', 'width', 'height', 'x', 'y']
-        else:
-            list_dic = ['0', '0', '0', '0']
-            list_keys = ['id', 'size', 'x', 'y']
-
-        matrix = []
-
-        if not list_objs:
+    def test_save_to_file_2(self):
+        """ Test JSON file """
+        Rectangle.save_to_file(None)
+        res = "[]\n"
+        with open("Rectangle.json", "r") as file:
+            with patch('sys.stdout', new=StringIO()) as str_out:
+                print(file.read())
+                self.assertEqual(str_out.getvalue(), res)
+        try:
+            os.remove("Rectangle.json")
+        except:
             pass
-        else:
-            for obj in list_objs:
-                for kv in range(len(list_keys)):
-                    list_dic[kv] = obj.to_dictionary()[list_keys[kv]]
-                matrix.append(list_dic[:])
 
-        with open(filename, 'w') as writeFile:
-            writer = csv.writer(writeFile)
-            writer.writerows(matrix)
-
-    @classmethod
-    def load_from_file_csv(cls):
-        """ Method that loads a CSV file """
-        filename = "{}.csv".format(cls.__name__)
-
-        if os.path.exists(filename) is False:
-            return []
-
-        with open(filename, 'r') as readFile:
-            reader = csv.reader(readFile)
-            csv_list = list(reader)
-
-        if cls.__name__ == "Rectangle":
-            list_keys = ['id', 'width', 'height', 'x', 'y']
-        else:
-            list_keys = ['id', 'size', 'x', 'y']
-
-        matrix = []
-
-        for csv_elem in csv_list:
-            dict_csv = {}
-            for kv in enumerate(csv_elem):
-                dict_csv[list_keys[kv[0]]] = int(kv[1])
-            matrix.append(dict_csv)
-
-        list_ins = []
-
-        for index in range(len(matrix)):
-            list_ins.append(cls.create(**matrix[index]))
-
-        return list_ins
+        Rectangle.save_to_file([])
+        with open("Rectangle.json", "r") as file:
+            self.assertEqual(file.read(), "[]")
