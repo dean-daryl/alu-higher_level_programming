@@ -80,22 +80,22 @@ class TestRectangleMethods(unittest.TestCase):
         with self.assertRaises(AttributeError):
             new.__y
 
-    def test_valide_attrs(self):
+    def test_valid_attrs(self):
         """ Trying to pass a string value """
         with self.assertRaises(TypeError):
             new = Rectangle("2", 2, 2, 2, 2)
 
-    def test_valide_attrs_2(self):
+    def test_valid_attrs_2(self):
         """ Trying to pass a string value """
         with self.assertRaises(TypeError):
             new = Rectangle(2, "2", 2, 2, 2)
 
-    def test_valide_attrs_3(self):
+    def test_valid_attrs_3(self):
         """ Trying to pass a string value """
         with self.assertRaises(TypeError):
             new = Rectangle(2, 2, "2", 2, 2)
 
-    def test_valide_attrs_4(self):
+    def test_valid_attrs_4(self):
         """ Trying to pass a string value """
         with self.assertRaises(TypeError):
             new = Rectangle(2, 2, 2, "2", 2)
@@ -371,7 +371,7 @@ class TestRectangleMethods(unittest.TestCase):
                              '"height": 2, "x": 0, "y": 0}]')
 
     def test_save_to_file_empty(self):
-        """Test for the saving to a an empty file"""
+        """Test for the saving to an empty file"""
         Rectangle.save_to_file([])
         self.assertTrue(os.path.isfile("Rectangle.json"))
         with open("Rectangle.json") as file:
@@ -388,9 +388,9 @@ class TestRectangleMethods(unittest.TestCase):
         r1 = Rectangle(5, 5)
         r2 = Rectangle(8, 2, 5, 5)
 
-        linput = [r1, r2]
-        Rectangle.save_to_file(linput)
-        loutput = Rectangle.load_from_file()
+        load_input = [r1, r2]
+        Rectangle.save_to_file(load_input)
+        load_output = Rectangle.load_from_file()
 
-        for i in range(len(linput)):
-            self.assertEqual(linput[i].__str__(), loutput[i].__str__())
+        for i in range(len(load_input)):
+            self.assertEqual(load_input[i].__str__(), load_output[i].__str__())
