@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Prints out all the State objects from the database hbtn_0e_6_usa
+Program adds the State object "Lousiana" to the database hbtn_0e_6_usa
 """
 
 
@@ -17,7 +17,8 @@ if __name__ == '__main__':
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    states = session.query(State).order_by(State.id).all()
+    newState = State(name='Louisiana')
+    session.add(newState)
+    session.commit()
 
-    for state in states:
-        print("{}: {}".format(state.id, state.name))
+    print(newState.id)

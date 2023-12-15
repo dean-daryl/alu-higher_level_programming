@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Prints out all the State objects from the database hbtn_0e_6_usa
+Script Changes the name of a State object from the database hbtn_0e_6_usa
 """
 
 
@@ -17,7 +17,8 @@ if __name__ == '__main__':
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    states = session.query(State).order_by(State.id).all()
+    stateUpdated = session.query(State).filter(State.id == 2).first()
 
-    for state in states:
-        print("{}: {}".format(state.id, state.name))
+    if stateUpdated:
+        stateUpdated.name = 'New Mexico'
+        session.commit()

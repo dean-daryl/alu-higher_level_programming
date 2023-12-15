@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Prints out all the State objects from the database hbtn_0e_6_usa
+Script deletes all State objects with a name containing the letter a
 """
 
 
@@ -17,7 +17,9 @@ if __name__ == '__main__':
     Session = sessionmaker(bind=engine)
     session = Session()
 
-    states = session.query(State).order_by(State.id).all()
+    states = session.query(State).filter(State.name.like('%a%')).all()
 
     for state in states:
-        print("{}: {}".format(state.id, state.name))
+        session.delete(state)
+
+    session.commit()
